@@ -1,0 +1,1 @@
+X, un tableau de coordonnées 2d pour chaque article,
