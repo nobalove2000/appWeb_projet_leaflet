@@ -2,10 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CRS covid19</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Article covid19</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+          crossorigin=""
+    />
+    <link rel="stylesheet" href="article.css"/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+            crossorigin="">
+    </script>
+    <script src="isochrones.js"></script>
+    <script src="journey.js"></script>
+    <script src="tileLayer.js"></script>
+    <script src="kdbush.js"></script>
+    <script src="X.js"></script>
+    <script src="Y.js"></script>
 </head>
-<body>
 
+<body>
+    <div id="mapid"></div>
+
+    <img
+            id="pin:16154530610149117952"
+            style="position:fixed;pointer-events:none;display:none;width: 32px;"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Map_marker.svg/667px-Map_marker.svg.png"
+    >
+
+    <canvas
+            id="canvas:16154530610149117952"
+            style="cursor: pointer;
+           border:1px solid black;
+           position: fixed; left: 0px;
+           width:49%;
+           display: inline-block;
+          "
+            width="128"
+            height="128"
+    >
+    </canvas>
+
+    <div
+            style="
+            right: 0px;
+            width: 49%;
+            position: fixed;
+            display: inline-block;
+            height: 100%; overflow-y: scroll;
+    "
+            id="result:16154530610149117952"
+    >
+    </div>
+
+    <script src="article.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

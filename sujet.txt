@@ -3,8 +3,10 @@ Bonjour
 Si vous cherchez quelque chose de motivant,
 je travaille en ce moment sur un ensemble d'articles scientifiques sur COVID-19.
 L'idée est d'aider les médecins à synthétiser la grande quantité d'articles sur le sujet.
+
 J'ai utilisé des méthodes d'intelligence artificielle pour générer une carte 2D à
 partir de 40 000 articles ici https://covid19.lis-lab.fr/X_2d.html.
+
 Ce prototype est fait de bric et de broc, et l'idée du projet serait de
 mettre à disposition cette visualisation sous forme de carte interactive
 (à l'aide de leafletjs, voir https://leafletjs.com/examples/crs-simple/crs-simple.html)
@@ -17,12 +19,16 @@ https://covid19.lis-lab.fr/X_2d.js contient les données :
     - X, un tableau de coordonnées 2d pour chaque article,
     - Y le html associé à l'article avec son titre et un lien vers l'original.
 
+
+Fichier X_2d.html
+=================
+
 https://covid19.lis-lab.fr/X_2d.html contient deux chose :
     - un copié-collé d'une librairie qui s'appelle kdbush
       (https://github.com/mourner/kdbush) et qui permet de retrouver très rapidement
       les points (articles) proches d'un point donné (là où on a cliqué) pour
       les afficher dans le cadre de droite;
-      et à partir de la ligne 188 le code qui dessine l'image et celui qui traite les clics.
+    - et à partir de la ligne 188 le code qui dessine l'image et celui qui traite les clics.
       On peut obtenir une version png de l'image générée en cliquant avec le bouton droit
       dessus et en la sauvegardant.
 Je peux faire une version plus propre si nécessaire.
@@ -36,6 +42,6 @@ L'idée est de :
 
     - Une bibliothèque comme node-canvas (https://github.com/Automattic/node-canvas) devrait
       permettre de faire le rendu.
-      
+
     - Les articles pourraient aussi être gérés côté serveur en envoyant au client uniquement
       ceux qui sont nécessaire.

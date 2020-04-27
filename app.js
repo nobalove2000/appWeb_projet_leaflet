@@ -14,6 +14,7 @@ var pin = document.getElementById("pin:16154530610149117952");
 var lat = 43.3, long = 5.4, zoomLevel = 13, marseille =L.latLng(lat, long);
 var mymap = L.map('mapid').setView(marseille, zoomLevel);
 var currentPosition = marseille;
+var popup = L.popup();
 
 //====================LAYER====================
 //=============================================
@@ -25,5 +26,12 @@ controlLayer.addTo(mymap);
 // locate(mymap);
 gelocButton.addTo(mymap);
 
-//====================ACTION EVENT====================
+//====================EVENT LISTENNER====================
 //====================================================
+// mymap.on('mousemove', onmousemove);
+// mymap.on('mousemoveleave', onmousemoveleave);
+
+var index = new KDBush(X);
+//draw_points();
+//window.onresize = draw_points;
+
