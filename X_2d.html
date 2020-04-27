@@ -254,7 +254,8 @@
                     var rect = canvas.getBoundingClientRect();
                     var ratio = window.devicePixelRatio || 1;
                     var width = rect.width * ratio, height = rect.height * ratio;
-                    var x = (event.clientX - rect.left) / (width / ratio), y = (event.clientY - rect.top) / (height / ratio);
+                    var x = (event.clientX - rect.left) / (width / ratio);
+                    var y = (event.clientY - rect.top) / (height / ratio);
                     var found = index.within(x, y, 5 * ratio / width);
                     var distances = {};
                     for(i of found) {

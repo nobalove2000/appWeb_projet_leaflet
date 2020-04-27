@@ -11,9 +11,13 @@ var canvas = document.getElementById("canvas:16154530610149117952");
 var result = document.getElementById("result:16154530610149117952");
 var pin = document.getElementById("pin:16154530610149117952");
 
+//====================STYLE ELEMENT====================
+//====================================================
+// div.stye.align = right;
+
 var lat = 43.3, long = 5.4, zoomLevel = 13, marseille =L.latLng(lat, long);
 var mymap = L.map('mapid').setView(marseille, zoomLevel);
-var currentPosition = marseille;
+var currentPoint = marseille;
 var popup = L.popup();
 
 //====================LAYER====================
@@ -23,12 +27,13 @@ controlLayer.addTo(mymap);
 
 //====================AUTO LOCALISATION====================
 //=========================================================
-// locate(mymap);
+locate(mymap);
 gelocButton.addTo(mymap);
 
 //====================EVENT LISTENNER====================
 //====================================================
-// mymap.on('mousemove', onmousemove);
+mymap.on('click', onMapClick);
+mymap.on('mousemove', onmousemove);
 // mymap.on('mousemoveleave', onmousemoveleave);
 
 var index = new KDBush(X);

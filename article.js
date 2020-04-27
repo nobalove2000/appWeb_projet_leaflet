@@ -30,10 +30,15 @@ gelocButton.onAdd = (map) =>{
 
 //====================ACTION EVENT====================
 //====================================================
+function onMapClick(mouseEvent) {
+    console.log(currentPoint);
+    currentPoint =mouseEvent.latlng;
+    popupPosition(currentPoint);
+    getreports(mouseEvent);
+}
+
 function onmousemove(mouseEvent) {
-    currentPosition =mouseEvent.latlng
-    L.marker(currentPosition).addTo(mymap)
-        .bindPopup(currentPosition).openPopup();
+    getreports(mouseEvent);
 }
 
 function onLocationFound(locEvent) {
@@ -53,28 +58,26 @@ function onLocationFound(locEvent) {
 function onLocationError(errorEvent) {
     alert(errorEvent.message);
 }
-// mouse event ----------------------------------
-function showPosition(event) {
-    var currentPosition = event.latlng;
-    var errMsg = event.latlng.toString()
-    L.marker(currentPosition).addTo(mymap).bindPopup(errMsg).openPopup();
+function popupPosition(point) {
+    var msg = point.toString()
+    popup.setLatLng(point).setContent(msg).openOn(mymap);
 }
 
 function getreports(e) {
-    console.log(latLng);
+    console.log(currentPoint.toString());
     if(e.type == 'click' || e.buttons != 0) {
         var rect = document.querySelector("#mapid").getBoundingClientRect();
         // var rect = mymap.getScale(div);
 
-        //rapport entre la taille (verticale) d'un pixel physique sur le périphérique
-        // d'affichage et la taille d'un pixel indépendant du matériel
+        //ratio = rapport entre la taille (verticale) d'un pixel physique sur le
+        // périphérique d'affichage et la taille d'un pixel indépendant du matériel
         var ratio = window.devicePixelRatio || 1;
-        var width = rect.width * ratio;
-        var height = rect.height * ratio;
-        var x = (e.clientX - rect.left) / (width / ratio); //coord x du pixel dans la map
-        var y = (e.clientY - rect.top) / (height / ratio); //coord y du pixel dans la map
-        var found = index.within(x, y, 5 * ratio / width);
-        console.log(found)
+        var realWidth = rect.width * ratio;
+        var realHeight = rect.height * ratio;
+        var x = (event.clientX - rect.left) / (realWidth / ratio); //coord x du pixel dans la map
+        var y = (event.clientY - rect.top) / (realHeight / ratio); //coord y du pixel dans la map
+        var found = index.within(x, y, 5 * ratio / realWidth);
+        console.log("found = " + found)
         var distances = {};
         for(i of found) {
             var dx = x - X[i][0], dy = y - X[i][1];
@@ -100,20 +103,24 @@ function getreports(e) {
         pin.style.top = '' + (e.clientY - 48) + 'px';
         pin.style.display = '';
     }
+    console.log("debugg")
 }
 onmousemoveleave = (e) => result.style.display = 'none'
+
 function draw_points() {
-    var rect = canvas.getBoundingClientRect();
+    var rect = document.querySelector("#mapid").getBoundingClientRect();
+    // var rect = canvas.getBoundingClientRect();
     // var rect = document.getElementById("mapid").getBoundingClientRect();
     var ratio = window.devicePixelRatio || 1;
-    var width = rect.width * ratio;
-    var height = rect.height * ratio;
-    canvas.width = width;
-    canvas.height = height;
+    var realWidth = rect.width * ratio;
+    var realHeight = rect.height * ratio;
+    canvas.width = realWidth;
+    canvas.height = realHeight;
     var g = canvas.getContext('2d');
     for(i = 0; i < X.length; i++) {
         // var x = X[i][0] * width, y = X[i][1] * height;
-        var x = latLng[1]    * width, y = latLng[0] * height;
+        var x = latLng[1] * realWidth;
+        var y = latLng[0] * realHeight;
         var shape = Array.isArray(point_shape) ? point_shape[i] : point_shape;
         var color = Array.isArray(point_color) ? point_color[i] : point_color;
         var size = Array.isArray(point_size) ? point_size[i] : point_size;
@@ -128,3 +135,4 @@ function draw_points() {
     }
     pin.style.display = 'none';
 }
+console.log("debugg")
