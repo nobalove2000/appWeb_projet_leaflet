@@ -23,38 +23,15 @@
 </head>
 
 <body>
-    <div id="mapid">map div</div>
+    <div id="mapid" class="autoshown">map div</div>
 
     <img
             id="pin:16154530610149117952"
-            style="position:fixed;pointer-events:none;display:none;width: 32px;"
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Map_marker.svg/667px-Map_marker.svg.png"
     >
 
-    <canvas
-            id="canvas:16154530610149117952"
-            style="cursor: pointer;
-           border:1px solid black;
-           position: fixed; left: 0px;
-           width:49%;
-           display: inline-block;
-          "
-            width="128"
-            height="128"
-    >
-    </canvas>
-
-    <div
-            style="
-            right: 0px;
-            width: 49%;
-            position: fixed;
-            display: inline-block;
-            height: 100%; overflow-y: scroll;
-    "
-            id="result:16154530610149117952"
-    >
-        result div
+    <div id="result:16154530610149117952" class="autoshown">
+        <h1><strong>result div</strong></h1>
     </div>
 
     <script src="article.js"></script>

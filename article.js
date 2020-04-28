@@ -1,4 +1,4 @@
-console.log("article.js loaded");
+ console.log("article.js loaded");
 
 
 
@@ -30,19 +30,27 @@ gelocButton.onAdd = (map) =>{
 
 //====================ACTION EVENT====================
 //====================================================
+ var onMouseMove = (mouseEvent) => getreports(mouseEvent)
+ // var onMouseMove = (mouseEvent) => reportsUnderMouse(mouseEvent)
+ var onMouseMoveLeave = (mouseEvent) => result.style.display = 'none'
+
 function onMapClick(mouseEvent) {
-    console.log(currentPoint);
+    //show position
     currentPoint =mouseEvent.latlng;
+    console.log(currentPoint);
+    popupPosition(currentPoint);
+}
+
+/*
+function onMapClick(mouseEvent) {
+    currentPoint =mouseEvent.latlng;
+    console.log(currentPoint);
     popupPosition(currentPoint);
     getreports(mouseEvent);
-}
-
-function onmousemove(mouseEvent) {
-    getreports(mouseEvent);
-}
+}*/
 
 function onLocationFound(locEvent) {
-    var radius = locEvent.accuracy/10;
+    var radius = locEvent.accuracy/35;
     var currentPosition = locEvent.latlng;
     mymap.setView(currentPosition,16);
     L.marker(currentPosition).addTo(mymap)
@@ -55,84 +63,123 @@ function onLocationFound(locEvent) {
     }).addTo(mymap);
 }
 
-function onLocationError(errorEvent) {
-    alert(errorEvent.message);
-}
+var onLocationError = (errorEvent) => alert(errorEvent.message);
+
+//====================POSITION====================
+//================================================
 function popupPosition(point) {
     var msg = point.toString()
     popup.setLatLng(point).setContent(msg).openOn(mymap);
 }
 
-function getreports(e) {
-    console.log(currentPoint.toString());
-    if(e.type == 'click' || e.buttons != 0) {
-        var rect = document.querySelector("#mapid").getBoundingClientRect();
-        // var rect = mymap.getScale(div);
-
-        //ratio = rapport entre la taille (verticale) d'un pixel physique sur le
-        // périphérique d'affichage et la taille d'un pixel indépendant du matériel
-        var ratio = window.devicePixelRatio || 1;
-        var realWidth = rect.width * ratio;
-        var realHeight = rect.height * ratio;
-        var x = (event.clientX - rect.left) / (realWidth / ratio); //coord x du pixel dans la map
-        var y = (event.clientY - rect.top) / (realHeight / ratio); //coord y du pixel dans la map
-        var found = index.within(x, y, 5 * ratio / realWidth);
-        console.log("found = " + found)
-        var distances = {};
-        for(i of found) {
-            var dx = x - X[i][0], dy = y - X[i][1];
-            distances[i] = dx * dx + dy * dy;
-        }
-        found.sort((a, b) => ('' + Y[b]).localeCompare(Y[a])).slice(100);
-        if(true) {
-            result.innerHTML = '';
-            for(i of found) {
-                var div = document.createElement('p');
-                div.innerHTML = Y[i];
-                result.appendChild(div);
-            }
-        } else {
-            var text = '';
-            for(i of found) {
-                text += Y[i] + '\n';
-            }
-            result.innerText = text;
-        }
-        result.scrollTo(0, 0);
-        pin.style.left = '' + (e.clientX - 16) + 'px';
-        pin.style.top = '' + (e.clientY - 48) + 'px';
-        pin.style.display = '';
-    }
-    console.log("debugg")
-}
-onmousemoveleave = (e) => result.style.display = 'none'
-
-function draw_points() {
+ /**
+  * converts xy from window into xy in the map div
+  */
+function xy() {
     var rect = document.querySelector("#mapid").getBoundingClientRect();
-    // var rect = canvas.getBoundingClientRect();
-    // var rect = document.getElementById("mapid").getBoundingClientRect();
-    var ratio = window.devicePixelRatio || 1;
-    var realWidth = rect.width * ratio;
-    var realHeight = rect.height * ratio;
-    canvas.width = realWidth;
-    canvas.height = realHeight;
-    var g = canvas.getContext('2d');
-    for(i = 0; i < X.length; i++) {
-        // var x = X[i][0] * width, y = X[i][1] * height;
-        var x = latLng[1] * realWidth;
-        var y = latLng[0] * realHeight;
-        var shape = Array.isArray(point_shape) ? point_shape[i] : point_shape;
-        var color = Array.isArray(point_color) ? point_color[i] : point_color;
-        var size = Array.isArray(point_size) ? point_size[i] : point_size;
-        g.fillStyle = color;
-        g.beginPath();
-        if(shape == 'square') {
-            g.rect(x - size, y - size, 2 * size * ratio, 2 * size * ratio);
-        } else {
-            g.arc(x, y, size * ratio, 0, Math.PI * 2);
-        }
-        g.fill();
-    }
-    pin.style.display = 'none';
+    //ratio = rapport entre la taille (verticale) d'un pixel physique sur le
+    // périphérique d'affichage et la taille d'un pixel indépendant du matériel
+    var mapWidth = rect.width * ratio;
+    var mapHeight = rect.height * ratio;
+    currentX = (event.clientX - rect.left) / (mapWidth / ratio); //coord x du pixel dans la map
+    currentY = (event.clientY - rect.top) / (mapHeight / ratio); //coord y du pixel dans la map
+    return [currentX,currentY];
 }
-console.log("debugg")
+
+//====================REPORTS====================
+//===============================================
+/*
+var findreports = (x,y) => {
+    // reports = [];
+    var mapWidth = mapDiv.getBoundingClientRect().width * ratio;
+    var reports = index.within(x, y, 5 * ratio / mapWidth);
+    var distances = {};
+    for(i of reports) {
+        var dx = x - X[i][0], dy = y - X[i][1];
+        distances[i] = dx * dx + dy * dy;
+    }
+    reports.sort((a, b) => ('' + Y[b]).localeCompare(Y[a])).slice(100);
+    return reports;
+}
+
+function showReportsOnEvent(event,reports) {
+    reports = [];
+    if(true) {
+        result.innerHTML = '';
+        for(r of reports) {
+            var p = document.createElement('p');
+            p.innerHTML = Y[r];
+            result.appendChild(p);
+        }
+    } else {
+        var text = '';
+        for(r of reports) {
+            text += Y[r] + '\n';
+        }
+        result.innerText = text;
+    }
+    result.scrollTo(0, 0);
+    pin.style.left = '' + (event.clientX - 16) + 'px';
+    pin.style.top = '' + (event.clientY - 48) + 'px';
+    pin.style.display = '';
+}
+
+function reportsOnClick(mouseEvent){
+    if(mouseEvent.type == 'click' || mouseEvent.buttons != 0) {
+        xy();
+        clickedReports = findreports(currentX, currentY);
+        showReportsOnEvent(mouseEvent, clickedReports);
+    }
+}
+function reportsUnderMouse(event) {
+    if(event.type == 'click' || event.buttons != 0) {
+        //coordinates
+        xy();
+        //reports------------
+        var reports = findreports(currentX,currentY);
+        //display reports list
+        showReportsOnEvent(event,reports);
+    }
+}
+*/
+
+function getreports(e) {
+     if(e.type == 'click' || e.buttons != 0) {
+         var rect = document.querySelector("#mapid").getBoundingClientRect();
+         // var rect = mymap.getScale(div);
+
+         //ratio = rapport entre la taille (verticale) d'un pixel physique sur le
+         // périphérique d'affichage et la taille d'un pixel indépendant du matériel
+         var ratio = window.devicePixelRatio || 1;
+         var realWidth = rect.width * ratio;
+         var realHeight = rect.height * ratio;
+         var x = (event.clientX - rect.left) / (realWidth / ratio); //coord x du pixel dans la map
+         var y = (event.clientY - rect.top) / (realHeight / ratio); //coord y du pixel dans la map
+         var found = index.within(x, y, 5 * ratio / realWidth);
+         console.log("found = " + found)
+         var distances = {};
+         for(i of found) {
+             var dx = x - X[i][0], dy = y - X[i][1];
+             distances[i] = dx * dx + dy * dy;
+         }
+         found.sort((a, b) => ('' + Y[b]).localeCompare(Y[a])).slice(100);
+         if(true) {
+             result.innerHTML = '';
+             for(i of found) {
+                 var div = document.createElement('p');
+                 div.innerHTML = Y[i];
+                 result.appendChild(div);
+             }
+         } else {
+             var text = '';
+             for(i of found) {
+                 text += Y[i] + '\n';
+             }
+             result.innerText = text;
+         }
+         result.scrollTo(0, 0);
+         pin.style.left = '' + (e.clientX - 16) + 'px';
+         pin.style.top = '' + (e.clientY - 48) + 'px';
+         pin.style.display = '';
+     }
+ }
