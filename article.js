@@ -30,15 +30,19 @@ gelocButton.onAdd = (map) =>{
 
 //====================ACTION EVENT====================
 //====================================================
- var onMouseMove = (mouseEvent) => getreports(mouseEvent)
- // var onMouseMove = (mouseEvent) => reportsUnderMouse(mouseEvent)
- var onMouseMoveLeave = (mouseEvent) => result.style.display = 'none'
+//  var onMouseMove = (mouseEvent) => getreports(mouseEvent)
+ var onMouseMove = (mouseEvent) => reportsUnderMouse(mouseEvent)
+ var onMouseMoveLeave = () => result.style.display = 'none'
 
 function onMapClick(mouseEvent) {
+    console.log("new click--------------------------------------------------------")
     //show position
     currentPoint =mouseEvent.latlng;
-    console.log(currentPoint);
+    console.log( "currentPoint = " + currentPoint);
     popupPosition(currentPoint);
+    //reports
+    // reportsOnClick(mouseEvent);
+    getreports(mouseEvent)
 }
 
 /*
@@ -50,9 +54,10 @@ function onMapClick(mouseEvent) {
 }*/
 
 function onLocationFound(locEvent) {
-    var radius = locEvent.accuracy/35;
+    var radius = locEvent.accuracy;
+    // var radius = locEvent.accuracy/35;
     var currentPosition = locEvent.latlng;
-    mymap.setView(currentPosition,16);
+    mymap.setView(currentPosition,20);
     L.marker(currentPosition).addTo(mymap)
         .bindPopup("My position " + currentPosition).openPopup();
     L.circle(currentPosition, {
@@ -75,6 +80,7 @@ function popupPosition(point) {
  /**
   * converts xy from window into xy in the map div
   */
+// function xy(event) {
 function xy() {
     var rect = document.querySelector("#mapid").getBoundingClientRect();
     //ratio = rapport entre la taille (verticale) d'un pixel physique sur le
@@ -84,37 +90,49 @@ function xy() {
     currentX = (event.clientX - rect.left) / (mapWidth / ratio); //coord x du pixel dans la map
     currentY = (event.clientY - rect.top) / (mapHeight / ratio); //coord y du pixel dans la map
     return [currentX,currentY];
+    console.log("debug xy")
 }
 
 //====================REPORTS====================
 //===============================================
-/*
-var findreports = (x,y) => {
-    // reports = [];
+
+var findReports = (x,y) => {
     var mapWidth = mapDiv.getBoundingClientRect().width * ratio;
     var reports = index.within(x, y, 5 * ratio / mapWidth);
+    if(reports.length === 0){
+        return [];
+    }
     var distances = {};
     for(i of reports) {
         var dx = x - X[i][0], dy = y - X[i][1];
         distances[i] = dx * dx + dy * dy;
     }
+    //first hundred sorted reports
     reports.sort((a, b) => ('' + Y[b]).localeCompare(Y[a])).slice(100);
+    console.log(reports)
     return reports;
 }
 
 function showReportsOnEvent(event,reports) {
-    reports = [];
+    if(reports.length = 0){
+        console.log("showReportsOnEvent : no reports to show");
+        result.innerText = "No reports to show";
+        // return ;
+    }
     if(true) {
         result.innerHTML = '';
-        for(r of reports) {
+        for (let r = 0; r < reports.length; r++) {
+            console.log(Y[r])
             var p = document.createElement('p');
             p.innerHTML = Y[r];
             result.appendChild(p);
         }
     } else {
         var text = '';
+        // for (let r = 0; r < reports.length; r++) {
         for(r of reports) {
             text += Y[r] + '\n';
+            console.log(Y[r])
         }
         result.innerText = text;
     }
@@ -124,24 +142,29 @@ function showReportsOnEvent(event,reports) {
     pin.style.display = '';
 }
 
-function reportsOnClick(mouseEvent){
-    if(mouseEvent.type == 'click' || mouseEvent.buttons != 0) {
-        xy();
-        clickedReports = findreports(currentX, currentY);
-        showReportsOnEvent(mouseEvent, clickedReports);
+function reportsOnClick(clickEvent){
+    if(clickEvent.type == 'click' || clickEvent.buttons != 0) {
+        xy(clickEvent);
+        // xy();
+        console.log("last x = " + currentX)
+        console.log("last y = " + currentY)
+        clickedReports = findReports(currentX, currentY);
+        showReportsOnEvent(clickEvent, clickedReports);
     }
 }
-function reportsUnderMouse(event) {
-    if(event.type == 'click' || event.buttons != 0) {
+function reportsUnderMouse(moveEvent) {
+    if(moveEvent.type == 'mousemove' || moveEvent.buttons != 0) {
         //coordinates
         xy();
+        console.log("last x = " + currentX)
+        console.log("last y = " + currentY)
         //reports------------
-        var reports = findreports(currentX,currentY);
+        var reports = findReports(currentX,currentY);
         //display reports list
-        showReportsOnEvent(event,reports);
+        showReportsOnEvent(moveEvent,reports);
     }
+    console.log("reportsUnderMouse debug")
 }
-*/
 
 function getreports(e) {
      if(e.type == 'click' || e.buttons != 0) {
@@ -183,3 +206,4 @@ function getreports(e) {
          pin.style.display = '';
      }
  }
+

@@ -34,10 +34,8 @@ gelocButton.addTo(mymap);
 //====================EVENT LISTENNER====================
 //====================================================
 mymap.on('click', onMapClick);
-mymap.on('mousemove', onMouseMove);
-mymap.on('mousemoveleave', onMouseMoveLeave);
+// mymap.on('mousemove', onMouseMove);
+// mymap.on('mousemoveleave', onMouseMoveLeave);
 
 var index = new KDBush(X);
-//draw_points();
-//window.onresize = draw_points;
 
