@@ -18,7 +18,8 @@ var ratio = window.devicePixelRatio || 1;
 var lat = 43.3, long = 5.4, zoomLevel = 13, marseille =L.latLng(lat, long);
 var mymap = L.map('mapid').setView(marseille, zoomLevel);
 var currentPoint = marseille;
-var clickedReports;
+var clickedReports = [];
+var lastClickedResult;
 var popup = L.popup();
 
 //====================LAYER====================
@@ -34,8 +35,8 @@ gelocButton.addTo(mymap);
 //====================EVENT LISTENNER====================
 //====================================================
 mymap.on('click', onMapClick);
-// mymap.on('mousemove', onMouseMove);
-// mymap.on('mousemoveleave', onMouseMoveLeave);
+mymap.on('mousemove', onMouseMove);
+mymap.on('mouseout', onMouseOut);
 
 var index = new KDBush(X);
 

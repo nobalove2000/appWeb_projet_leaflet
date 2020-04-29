@@ -32,7 +32,8 @@ gelocButton.onAdd = (map) =>{
 //====================================================
 //  var onMouseMove = (mouseEvent) => getreports(mouseEvent)
  var onMouseMove = (mouseEvent) => reportsUnderMouse(mouseEvent)
- var onMouseMoveLeave = () => result.style.display = 'none'
+ // var onMouseMoveLeave = () => result.style.display = 'none'
+ var onMouseOut = () => result.innerHTML = lastClickedResult;
 
 function onMapClick(mouseEvent) {
     console.log("new click--------------------------------------------------------")
@@ -41,17 +42,9 @@ function onMapClick(mouseEvent) {
     console.log( "currentPoint = " + currentPoint);
     popupPosition(currentPoint);
     //reports
-    // reportsOnClick(mouseEvent);
-    getreports(mouseEvent)
+    reportsOnClick(mouseEvent);
+    // getreports(mouseEvent)
 }
-
-/*
-function onMapClick(mouseEvent) {
-    currentPoint =mouseEvent.latlng;
-    console.log(currentPoint);
-    popupPosition(currentPoint);
-    getreports(mouseEvent);
-}*/
 
 function onLocationFound(locEvent) {
     var radius = locEvent.accuracy;
@@ -90,7 +83,6 @@ function xy() {
     currentX = (event.clientX - rect.left) / (mapWidth / ratio); //coord x du pixel dans la map
     currentY = (event.clientY - rect.top) / (mapHeight / ratio); //coord y du pixel dans la map
     return [currentX,currentY];
-    console.log("debug xy")
 }
 
 //====================REPORTS====================
@@ -109,20 +101,19 @@ var findReports = (x,y) => {
     }
     //first hundred sorted reports
     reports.sort((a, b) => ('' + Y[b]).localeCompare(Y[a])).slice(100);
-    console.log(reports)
     return reports;
 }
 
 function showReportsOnEvent(event,reports) {
-    if(reports.length = 0){
+    if(reports.length == 0){
         console.log("showReportsOnEvent : no reports to show");
         result.innerText = "No reports to show";
         // return ;
     }
+    result.innerHTML = '';
     if(true) {
         result.innerHTML = '';
-        for (let r = 0; r < reports.length; r++) {
-            console.log(Y[r])
+        for (var r = 0; r < reports.length; r++) {
             var p = document.createElement('p');
             p.innerHTML = Y[r];
             result.appendChild(p);
@@ -144,66 +135,27 @@ function showReportsOnEvent(event,reports) {
 
 function reportsOnClick(clickEvent){
     if(clickEvent.type == 'click' || clickEvent.buttons != 0) {
-        xy(clickEvent);
-        // xy();
-        console.log("last x = " + currentX)
-        console.log("last y = " + currentY)
+        // xy(clickEvent);
+        xy();
+        //save clickedReports
         clickedReports = findReports(currentX, currentY);
         showReportsOnEvent(clickEvent, clickedReports);
+        //adding title
+        var title = "<h1>" + clickedReports.length + " reports around " +
+            currentPoint.lat + "° lattitude and " +
+            currentPoint.lng + "° longitude :</h1>";
+        //saving clicked reports
+        lastClickedResult = title + result.innerHTML;
+        console.log(title)
     }
 }
 function reportsUnderMouse(moveEvent) {
     if(moveEvent.type == 'mousemove' || moveEvent.buttons != 0) {
         //coordinates
         xy();
-        console.log("last x = " + currentX)
-        console.log("last y = " + currentY)
-        //reports------------
+        // save temporaly reports------------
         var reports = findReports(currentX,currentY);
         //display reports list
         showReportsOnEvent(moveEvent,reports);
     }
-    console.log("reportsUnderMouse debug")
 }
-
-function getreports(e) {
-     if(e.type == 'click' || e.buttons != 0) {
-         var rect = document.querySelector("#mapid").getBoundingClientRect();
-         // var rect = mymap.getScale(div);
-
-         //ratio = rapport entre la taille (verticale) d'un pixel physique sur le
-         // périphérique d'affichage et la taille d'un pixel indépendant du matériel
-         var ratio = window.devicePixelRatio || 1;
-         var realWidth = rect.width * ratio;
-         var realHeight = rect.height * ratio;
-         var x = (event.clientX - rect.left) / (realWidth / ratio); //coord x du pixel dans la map
-         var y = (event.clientY - rect.top) / (realHeight / ratio); //coord y du pixel dans la map
-         var found = index.within(x, y, 5 * ratio / realWidth);
-         console.log("found = " + found)
-         var distances = {};
-         for(i of found) {
-             var dx = x - X[i][0], dy = y - X[i][1];
-             distances[i] = dx * dx + dy * dy;
-         }
-         found.sort((a, b) => ('' + Y[b]).localeCompare(Y[a])).slice(100);
-         if(true) {
-             result.innerHTML = '';
-             for(i of found) {
-                 var div = document.createElement('p');
-                 div.innerHTML = Y[i];
-                 result.appendChild(div);
-             }
-         } else {
-             var text = '';
-             for(i of found) {
-                 text += Y[i] + '\n';
-             }
-             result.innerText = text;
-         }
-         result.scrollTo(0, 0);
-         pin.style.left = '' + (e.clientX - 16) + 'px';
-         pin.style.top = '' + (e.clientY - 48) + 'px';
-         pin.style.display = '';
-     }
- }
-
